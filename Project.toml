@@ -1,0 +1,13 @@
+name = "PlotJuggler"
+uuid = "4542c7b1-ea73-42e5-9a85-c29583659a5a"
+authors = ["Patrick Bouffard <airpmb@fastmail.com> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1.7"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]

@@ -9,10 +9,12 @@ A very basic package for getting timeseries plots out of your Julia session and 
 
 ## Usage
 ```
-t = 0:0.1:100
+t = 0:0.01:5
 a = cos.(2*pi*t)
 b = sin.(2*pi*t)
 
 pjplot(t, [a, b])
 
 ```
+
+![Demo GIF](docs/demo.gif "Demo GIF")

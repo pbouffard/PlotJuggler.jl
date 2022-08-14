@@ -8,6 +8,7 @@ DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 
 [compat]
+Revise = "3"
 julia = "1.7"
 
 [extras]

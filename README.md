@@ -21,7 +21,7 @@ pjplot(t, (; a, b))
 
 ```
 
-![Demo GIF](docs/demo.gif "Demo GIF")
+![Demo GIF](docs/demo_anim.gif "Demo GIF")
 
 ## How it works
 Very hackily, honestly. The provided data gets written to a CSV file, and the curve names are used to write a PlotJuggler layout XML file. These are passed to PlotJuggler using commandline arguments.

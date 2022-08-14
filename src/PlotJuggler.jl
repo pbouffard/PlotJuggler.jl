@@ -46,25 +46,23 @@ pjplot(t, [t, 2*t, 4*t])
 ```
 """
 function pjplot(t, curves::AbstractVector{T}) where {T <: AbstractVector}
-    @show "Vector of Vectors"
     curvenames = "data" .* string.(1:length(curves))
     data = (; collect(zip(Symbol.(curvenames), curves))...)
-    #return data
     pjplot(t, data)
 end
 
 function pjplot(t, data::AbstractVector{T}) where {T <: Number}
-    @show "Vector"
     pjplot(t, [data])
 end
 
+function pjplot(data::AbstractVector{T}) where {T <: Number}
+    pjplot(1:length(data), [data])
+end
+
 function pjplot(t, curves::T) where {T <: NamedTuple}
-    @show "NamedTuple vector"
     # Generate CSV file
     path = tempname(cleanup=false) * ".csv"
-    @show path
     curvenames = string.(keys(curves))
-    @show curvenames
     open(path, "w") do io
         write(io, join(["t", curvenames...], ","))
         write(io, "\n")
@@ -76,7 +74,6 @@ function pjplot(t, curves::T) where {T <: NamedTuple}
 
     pjcmd = `$(pjpath) --nosplash -d $(path) -l $(layoutpath)`
     # pjcmd = `$(pjcmdstr)`
-    @show pjcmd
     # start PJ (TODO - surely there's a better way to spawn PJ and return immediately..?)
     pjbashcmd = `/bin/bash -c "$(pjcmd)"\&`
     run(Cmd(pjcmd; detach=false))

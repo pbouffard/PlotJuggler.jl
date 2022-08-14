@@ -14,4 +14,5 @@ a = cos.(2*pi*t)
 b = sin.(2*pi*t)
 
 pjplot(t, [a, b])
+
 ```

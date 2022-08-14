@@ -12,6 +12,8 @@ A package for getting timeseries plots out of your Julia session and into [PlotJ
 * Really simple syntax - (ab)use NamedTuples to have plot curve names take on names of variables in local workspace
 
 ## Usage
+Note that the package assumes you have the `plotjuggler` binary in your `PATH`.
+
 ```
 using PlotJuggler
 

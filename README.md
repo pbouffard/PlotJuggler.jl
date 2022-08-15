@@ -42,7 +42,7 @@ The optional `xy` argument can be set to include an XY plot of 2 of the variable
 pjplot(t, (; a, b); xy=(; a, b))
 ```
 
-![XY example](docs/xydemo.png "Demo XY Plot")
+![XY example](docs/xydemo2.png "Demo XY Plot")
 
 ## How it works
 Very hackily, honestly. The provided data gets written to a CSV file, and the curve names are used to write a PlotJuggler layout XML file. These are passed to PlotJuggler using commandline arguments.

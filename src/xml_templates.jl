@@ -1,13 +1,30 @@
 xml_templates = (;
-header = """
+header = nsplitters -> """
 <?xml version='1.0' encoding='UTF-8'?>
 <root>
  <tabbed_widget parent="main_window" name="Main Window">
   <Tab containers="1" tab_name="tab1">
    <Container>
-   <DockSplitter count="1" orientation="-" sizes="1.0">
-    <DockArea name="...">
-     <plot mode="TimeSeries" style="Lines">d
+   <DockSplitter count="1" sizes="1" orientation="-">
+   <DockSplitter count="$(nsplitters)" sizes="0.5;0.5" orientation="|">
+  """,
+   
+dockarea = plotmode -> """
+   <DockArea name="...">
+    <plot mode="$(plotmode)" style="Lines">
+
+""",
+
+plot_foot = """
+</plot>
+""", 
+
+dockarea_foot = """
+</DockArea>
+""",
+
+xycurve = (xname, yname, color) -> """
+<curve curve_y="$(yname)" color="$(color)" curve_x="$(xname)" name="$(xname) vs $(yname)"/>
 """,
 
 curve = (name, color) -> """
@@ -18,8 +35,7 @@ color="$(color)"
 """,
 
 footer = """
-</plot>
-</DockArea>
+</DockSplitter>
 </DockSplitter>
 </Container>
 </Tab>

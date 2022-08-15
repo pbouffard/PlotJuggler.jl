@@ -14,6 +14,7 @@ A package for getting timeseries plots out of your Julia session and into [PlotJ
 ## Usage
 Note that the package assumes you have the `plotjuggler` binary in your `PATH`.
 
+### Time Series
 ```
 using PlotJuggler
 
@@ -33,6 +34,15 @@ pjplot(a)
 ```
 
 ![Demo GIF](docs/demo_anim.gif "Demo GIF")
+
+### Time Series + XY Plot
+The optional `xy` argument can be set to include an XY plot of 2 of the variables. The same NamedTuple trick is used to minimize typing. Note that for now it's required that the time history plots include the vectors to be used in the XY plot, and the 'anonymous' forms do not support XY plotting:
+
+```
+pjplot(t, (; a, b); xy=(; a, b))
+```
+
+![XY example](docs/xydemo.png "Demo XY Plot")
 
 ## How it works
 Very hackily, honestly. The provided data gets written to a CSV file, and the curve names are used to write a PlotJuggler layout XML file. These are passed to PlotJuggler using commandline arguments.

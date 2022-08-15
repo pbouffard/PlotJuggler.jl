@@ -5,13 +5,15 @@ t = 0:0.01:5
 freq = 2.0
 a = cos.(2*pi/freq*t)
 b = sin.(2*pi/freq*t)
+c = a .* exp.(-t)
+d = b .* exp.(-t)
 
 @testset "XY plots" begin
     coords = (; a, b)
     pjplot(t, coords; xy=coords)
 
     exp_t=exp.(-t)
-    pjplot(t, (; a, b, exp_t); xy=(; a, exp_t))
+    pjplot(t, (; c, d, exp_t); xy=(; c, d))
 end
 
 @testset "Basic Usage" begin

@@ -57,6 +57,5 @@ This isn't meant to be a replacement for things like [Plots.jl](https://docs.jul
 * The CSV Loader dialog pops up asking to select the X axis column, just hit Enter to take the default of t. This appears to be a PlotJuggler bug, as the XML layout file does contain this information and [supposedly](https://github.com/facontidavide/PlotJuggler/issues/129#issuecomment-457650629) this should prevent the popup.
 * Each invocation starts a brand new PlotJuggler process.
 * Only a basic layout of a single tab with a single axis containing 1 or more curves plotted against time is supported. I have notional plans to improve this such that multiple axes are generated based on nested vectors, e.g. `pjplot(t, [(; a, b], c)]` would give you 2 stacked plots, with `a` and `b` plotted against time in the top plot and `c` vs time in the bottom one.
-* XY plots aren't supported. Need to think about a nice simple syntax for this.
 * Since `which` is used to locate the `plotjuggler` binary this probably means it won't work on Windows, though probably fixing this is easy.
 * Many other features of PlotJuggler aren't supported, e.g. streaming data. It should be possible to add such features though.

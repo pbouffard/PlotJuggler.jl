@@ -5,7 +5,7 @@
 [![Build Status](https://github.com/pbouffard/PlotJuggler.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/pbouffard/PlotJuggler.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/pbouffard/PlotJuggler.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/pbouffard/PlotJuggler.jl)
 
-A package for getting timeseries plots out of your Julia session and into [PlotJuggler](https://github.com/facontidavide/PlotJuggler) *fast*. It doesn't so much *solve* the Time to First Plot issue but does work around it for very basic use cases that correspond well to (some of) PlotJuggler's capabilities.
+A package for getting timeseries plots out of your Julia session and into [PlotJuggler](https://github.com/facontidavide/PlotJuggler) *fast*. It doesn't so much *solve* the [Time to First Plot issue](https://discourse.julialang.org/tag/ttfp) but does work around it for very basic use cases that correspond well to (some of) PlotJuggler's capabilities.
 
 ## Features
 * Very fast way to just get a simple plot onto the screen.
@@ -15,7 +15,7 @@ A package for getting timeseries plots out of your Julia session and into [PlotJ
 Note that the package assumes you have the `plotjuggler` binary in your `PATH`.
 
 ### Time Series
-```
+```julia
 using PlotJuggler
 
 t = 0:0.01:5
@@ -38,7 +38,7 @@ pjplot(a)
 ### Time Series + XY Plot
 The optional `xy` argument can be set to include an XY plot of 2 of the variables. The same NamedTuple trick is used to minimize typing. Note that for now it's required that the time history plots include the vectors to be used in the XY plot, and the 'anonymous' forms do not support XY plotting:
 
-```
+```julia
 c = a .* exp.(-t)
 d = b .* exp.(-t)
 
@@ -46,6 +46,23 @@ pjplot(t, (; c, d); xy=(; c, d))
 ```
 
 ![XY example](docs/xydemo3.png "Demo XY Plot")
+
+### ODE Solutions
+Results of ODE solvers (conforming to [`AbstractODESolution`](https://scimlbase.sciml.ai/dev/interfaces/Solutions/)) can simply be passed and the components will be plotted against time:
+
+```julia
+# Adapted from https://mtk.sciml.ai/stable/tutorials/ode_modeling/
+@variables t x(t) y(t)   # independent and dependent variables
+@parameters τ       # parameters 
+@constants h = 1    # constants have an assigned value
+D = Differential(t) # define an operator for the differentiation w.r.t. time
+@named fol = ODESystem([D(x) ~ y + (h - x) / τ, D(y) ~ -x])
+prob = ODEProblem(fol, [x => 0.0, y => 1.0], (0.0, 20.0), [τ => 3.0])
+sol = solve(prob)
+pjplot(sol; title="ODE Solution")
+```
+
+![ODE example](docs/demo_ode.png "Demo ODE Solution Plot")
 
 ## How it works
 Very hackily, honestly. The provided data gets written to a CSV file, and the curve names are used to write a PlotJuggler layout XML file. These are passed to PlotJuggler using commandline arguments.

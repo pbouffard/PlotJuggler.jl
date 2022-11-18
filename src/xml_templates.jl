@@ -1,16 +1,16 @@
 xml_templates = (;
-header = nsplitters -> """
+header = (nsplitters, tabtitle="Plotjuggler.jl") -> """
 <?xml version='1.0' encoding='UTF-8'?>
 <root>
  <tabbed_widget parent="main_window" name="Main Window">
-  <Tab containers="1" tab_name="tab1">
+  <Tab containers="1" tab_name="$(tabtitle)">
    <Container>
    <DockSplitter count="1" sizes="1" orientation="-">
    <DockSplitter count="$(nsplitters)" sizes="0.5;0.5" orientation="|">
   """,
    
-dockarea = plotmode -> """
-   <DockArea name="...">
+dockarea = (plotmode, plottitle="...") -> """
+   <DockArea name="$(plottitle)">
     <plot mode="$(plotmode)" style="Lines">
 
 """,

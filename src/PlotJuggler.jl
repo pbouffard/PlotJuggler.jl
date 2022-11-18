@@ -3,6 +3,7 @@ module PlotJuggler
 export pjplot
 
 using DelimitedFiles
+using SciMLBase: AbstractODESolution
 
 include("xml_templates.jl")
 
@@ -54,21 +55,23 @@ coords = (; a, b)
 pjplot(t, coords; xy=coords)
 ``` 
 """
-function pjplot(t, curves::AbstractVector{T}) where {T <: AbstractVector}
+function pjplot(t, curves::AbstractVector{T}; kwargs...) where {T <: AbstractVector}
     curvenames = "data" .* string.(1:length(curves))
     data = (; collect(zip(Symbol.(curvenames), curves))...)
-    pjplot(t, data)
+    pjplot(t, data; kwargs...)
 end
 
-function pjplot(t, data::AbstractVector{T}) where {T <: Number}
-    pjplot(t, [data])
+function pjplot(t, data::AbstractVector{T}; kwargs...) where {T <: Number}
+    pjplot(t, [data]; kwargs...)
 end
 
-function pjplot(data::AbstractVector{T}) where {T <: Number}
-    pjplot(1:length(data), [data])
+function pjplot(data::AbstractVector{T}; kwargs...) where {T <: Number}
+    pjplot(1:length(data), [data]; kwargs...)
 end
 
-function pjplot(t, curves::T; xy=nothing) where {T <: NamedTuple}
+function pjplot(t, curves::T; xy=nothing, detach=false, wait=false, title="...", kwargs...) where {T <: NamedTuple}
+    # TODO: warn if an unsupported kwarg is passed? (is there a Julian way to do this?)
+    
     # Generate CSV file
     path = tempname(cleanup=false) * ".csv"
     curvenames = string.(keys(curves))
@@ -79,34 +82,49 @@ function pjplot(t, curves::T; xy=nothing) where {T <: NamedTuple}
     end
 
     # Generate layout file
-    layoutpath = writelayoutfile(path, curvenames; xy=xy)
+    layoutpath = writelayoutfile(path, curvenames, title; xy=xy)
 
     pjcmd = `$(pjpath) --nosplash -d $(path) -l $(layoutpath)`
-    # pjcmd = `$(pjcmdstr)`
-    # start PJ (TODO - surely there's a better way to spawn PJ and return immediately..?)
-    pjbashcmd = `/bin/bash -c "$(pjcmd)"\&`
-    run(Cmd(pjcmd; detach=false))
+    run(Cmd(pjcmd; detach=detach); wait=wait)
 end
 
-function writelayoutfile(datapath, curvenames; xy=nothing)
+function pjplot(t::AbstractVector{T}, curves::Dict{S,V}; kwargs...) where {T <: Number, S <: AbstractString, V <: AbstractVector}
+  curves_nt = NamedTuple(Symbol(k) => v for (k, v) in curves)
+  pjplot(t, curves_nt; kwargs...)
+end
+
+function pjplot(t::AbstractVector{T}, curves::Dict{Symbol,V}; kwargs...) where {T <: Number, V <: AbstractVector}
+  curves_nt = NamedTuple(curves)
+  pjplot(t, curves_nt; kwargs...)
+end
+
+function pjplot(sol::T; kwargs...) where {T <: AbstractODESolution}
+  size_u, size_t = size(sol)
+  curves = Dict("u$(i)" => u for (i, u) in enumerate(eachrow(sol)))
+  pjplot(sol.t, curves; kwargs...)
+end
+
+function writelayoutfile(datapath, curvenames, plottitle; xy=nothing, xytitle=nothing)
     path = tempname(cleanup=false) * ".xml"
     @info "layout file: $(path)"
-    doxyplot = !isnothing(xy)
+    do_xyplot = !isnothing(xy)
     open(path, "w") do io
-        xmlout = xml_templates.header(doxyplot ? 2 : 1)
+        xmlout = xml_templates.header(do_xyplot ? 2 : 1)
         
-        xmlout *= xml_templates.dockarea("TimeSeries")
+        xmlout *= xml_templates.dockarea("TimeSeries", plottitle)
         for i = eachindex(curvenames)
             xmlout *= xml_templates.curve(curvenames[i], defaultcolors[mod1(i, length(defaultcolors))])
         end
         xmlout *= xml_templates.plot_foot
         xmlout *= xml_templates.dockarea_foot
         
-        if doxyplot
-            xmlout *= xml_templates.dockarea("XYPlot")
-            xmlout *= xml_templates.xycurve(string(keys(xy)[1]), string(keys(xy)[2]), defaultcolors[1])
-            xmlout *= xml_templates.plot_foot
-            xmlout *= xml_templates.dockarea_foot
+        if do_xyplot
+          xname = string(keys(xy)[1])
+          yname = string(keys(xy)[2])
+          xmlout *= xml_templates.dockarea("XYPlot", isnothing(xytitle) ? "$(xname), $(yname) vs. t" : xytitle)
+          xmlout *= xml_templates.xycurve(xname, yname, defaultcolors[1])
+          xmlout *= xml_templates.plot_foot
+          xmlout *= xml_templates.dockarea_foot
         end
 
         xmlout *= xml_templates.footer

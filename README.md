@@ -11,6 +11,22 @@ A package for getting timeseries plots out of your Julia session and into [PlotJ
 * Very fast way to just get a simple plot onto the screen.
 * Really simple syntax - (ab)use NamedTuples to have plot curve names take on names of variables in local workspace
 
+## Installation
+PlotJuggler.jl is not (yet) registered in General. As with any Julia package not in the General registry, you'll can add it via the URL:
+
+```julia
+julia> using Pkg
+julia> Pkg.add(url="git@github.com:pbouffard/PlotJuggler.jl.git")
+```
+
+Alternatively you can add my personal registry and then add the package. This has the advantage that you'll get any updates I make to the package, and if used in a package then Manifest.toml won't be necessary (although users of the package would also need to add the registry):
+
+```julia
+julia> using Pkg
+julia> pkg"registry add git@github.com:pbouffard/PBouffardJuliaPackageRegistry.git"
+julia> pkg"add PlotJuggler"
+```
+
 ## Usage
 Note that the package assumes you have the `plotjuggler` binary in your `PATH`.
 

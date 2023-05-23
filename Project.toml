@@ -1,6 +1,6 @@
 name = "PlotJuggler"
 uuid = "4542c7b1-ea73-42e5-9a85-c29583659a5a"
-authors = ["Patrick Bouffard <airpmb@fastmail.com> and contributors"]
+authors = ["Patrick Bouffard <pbouffard@eecs.berkeley.edu> and contributors"]
 version = "0.1.0"
 
 [deps]

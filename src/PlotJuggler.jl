@@ -12,7 +12,7 @@ include("xml_templates.jl")
 pjpath = try
         strip(read(`which plotjuggler`, String))
     catch
-        defaultpath = "/Users/patrick/dev/PlotJuggler/install/bin/plotjuggler" # TODO: make customizable
+        defaultpath = "/Users/patrick/bin/plotjuggler" # TODO: make customizable
         println("Warning: using default path of $(defaultpath)")
         defaultpath
     end
